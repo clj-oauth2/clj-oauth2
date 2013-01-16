@@ -55,9 +55,9 @@
 (defn request-uri [request oauth2-params]
   (let [scheme (if (:force-https oauth2-params) "https" (name (:scheme request)))
         port (if (or (and (= (name (:scheme request)) "http") 
-                          (not= (:server-port request) 80))
+                          (not= (:server-port request 80) 80))
                      (and (= (name (:scheme request)) "https") 
-                          (not= (:server-port request) 443))) 
+                          (not= (:server-port request 443) 443))) 
                (str ":" (:server-port request)))]
     (str scheme "://" (:server-name request) port (:uri request))))
 
@@ -118,7 +118,8 @@ create a vector of values."
         oauth2-url-params (nth oauth2-url-vector 1 "")
         encoding (or (:character-encoding request) "UTF-8")]
     (and (= oauth2-uri (request-uri request oauth2-params))
-         (submap? (keyify-params (parse-params oauth2-url-params encoding)) (:params request)))))
+         (submap? (keyify-params (parse-params oauth2-url-params encoding))
+                  (:params request)))))
 
 ;; This Ring wrapper acts as a filter, ensuring that the user has an OAuth
 ;; token for all but a set of explicitly excluded URLs. The response from
