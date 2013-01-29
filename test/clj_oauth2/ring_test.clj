@@ -42,10 +42,15 @@
 (deftest is-callback
     (testing
       "is-callback returns true for valid urls"
-      (is (= (base/is-callback 
-               {}
-               {:redirect-uri "https://example.com/oauth/callback"}) true))
-      (is (= (base/is-callback "https://example.com/oauth/callback?param=something;") true)))
+      (is (base/is-callback
+            {:scheme "https"
+             :server-name "example.com"
+             :uri "/oauth/callback"}
+            {:redirect-uri "https://example.com/oauth/callback"})))
     (testing
       "is-callback returns false for invalid urls"
-      (is (= (base/is-callback "") false))))
+      (is (not (base/is-callback
+                 {:scheme "https"
+                  :server-name "example.com"
+                  :uri "/not-oauth-path"}
+                 {:redirect-uri "https://example.com/oauth/callback"})))))
